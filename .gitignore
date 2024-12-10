@@ -1,0 +1,5 @@
+*build
+.cache
+Makefile
+*EPIC.txt
+*info.txt
