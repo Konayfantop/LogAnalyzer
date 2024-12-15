@@ -1,7 +1,9 @@
+#include <exception>
 #include <iostream>
 #include <array>
 #include <sstream>
 #include "loggenerator/LogGenerator.hpp"
+#include "utils/exception/UnsupportedFormatError.hpp"
 
 // cmake ..
 // cmake --build
@@ -35,7 +37,14 @@ int main(int argc, char** argv)
             std::getline(ss, aTypeAndFileName[1], '.');
 
             loggenerator::LogGenerator aLogGen(aTypeAndFileName[0], aTypeAndFileName[1]);
-            aLogGen.initiate();
+            try
+            {
+                aLogGen.initiate();
+            }
+            catch(utils::exception::UnsupportedFormatError& e)
+            {
+                std::cout << "Problem during parsing because of : " << e.whatsWrong() << std::endl;
+            }
         }
     }
 

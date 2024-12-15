@@ -13,6 +13,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(SOURCES
     src/main.cpp
     src/LogGenerator.cpp
+    src/handler/LogHandler.cpp
+    src/handler/TextLogHandler.cpp
 )
 
 # Add executable
