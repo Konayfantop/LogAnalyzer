@@ -1,21 +1,32 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 namespace loggenerator
 {
 
+namespace handler
+{
+class LogHandler;
+}
+
 class LogGenerator
 {
 public:
-    LogGenerator(const std::string& iPath, const std::string& iType);
+    explicit LogGenerator(const std::string& iFileName);
     ~LogGenerator() = default;
 
-    void initiate();
+    std::ofstream initiateAndGenerateLog();
 
 private:
-    const std::string& _inputType;
-    const std::string& _path;
+    void separateInputToNameAndType(std::string& oFileName, std::string& oFileType);
+    std::unique_ptr<loggenerator::handler::LogHandler> filterOutUnsupportedTypesAndComposeNewHandler(
+        const std::string& aFileName,
+        const std::string& iFileType);
+
+private:
+    const std::string& _file;
 };
 
 }

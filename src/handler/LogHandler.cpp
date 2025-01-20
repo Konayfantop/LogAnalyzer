@@ -1,17 +1,24 @@
 #include <ios>
 #include <loggenerator/handler/LogHandler.hpp>
+#include <utils/exception/FileImportError.hpp>
 
 #include <iostream>
+#include <filesystem>
 
 namespace loggenerator::handler{
 
 LogHandler::LogHandler(const std::string& iFilePath)
 {
+    if(!std::filesystem::exists(iFilePath))
+    {
+        throw utils::exception::FileImportError("File path provided : " + iFilePath + ", doesn't exist in the repo");
+    }
+
     _file.open(iFilePath, std::ios::in);
+
     if(!_file.is_open())
     {
-        std::cout << "Couldn't import the file from : " << iFilePath << ", file content won't be analyzed" << std::endl;
-        throw std::ios_base::failure("Cannot open file: " + iFilePath);
+        throw utils::exception::FileImportError("Cannot import the file from : " + iFilePath);
     }
 }
 

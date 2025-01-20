@@ -1,50 +1,49 @@
-#include <exception>
+#include <fstream>
 #include <iostream>
-#include <array>
-#include <sstream>
 #include "loggenerator/LogGenerator.hpp"
 #include "utils/exception/UnsupportedFormatError.hpp"
+#include "utils/exception/FileImportError.hpp"
 
 // cmake ..
 // cmake --build
 
-
-
 int main(int argc, char** argv)
 {
     std::cout << "Welcome to log analyzer !" << std::endl;
-    std::cout << "An initiation from Kostas, simply to learn stuff !" << std::endl;
 
-    //will try to extract the type of the file passed. By default .txt
+    // TODO : we need to compose the firstLog even if we didn't manage to parse anything, we should present the error message
+    // will try to extract the type of the file passed. By default .txt
     std::string firstLog;
     if(argc == 1)
     {
         firstLog = "[ERROR] : No arguments passed. Nothing to show, will close\n";
+        // COMPOSE ERROR
     }
     else if(argc > 2)
     {
         firstLog = "[WARNING]: More arguments passed than expected, will ignore and take into account the first one\n";
+        // COMPOSE WARNING
     }
     else
     {
-        const std::string aFileNameWithExtension = argv[1];
-        const std::size_t index = aFileNameWithExtension.find('.');
-        if(index != std::string::npos)
-        {
-            std::array<std::string, 2> aTypeAndFileName;
-            std::istringstream ss{aFileNameWithExtension};
-            std::getline(ss, aTypeAndFileName[0], '.');
-            std::getline(ss, aTypeAndFileName[1], '.');
+        std::cout << "KSEFTILARA_1 : " << argv[1] << std::endl;
 
-            loggenerator::LogGenerator aLogGen(aTypeAndFileName[0], aTypeAndFileName[1]);
-            try
-            {
-                aLogGen.initiate();
-            }
-            catch(utils::exception::UnsupportedFormatError& e)
-            {
-                std::cout << "Problem during parsing because of : " << e.whatsWrong() << std::endl;
-            }
+        // TODO : Not nice way to take the argument
+        const std::string& aFileName = argv[1];
+        loggenerator::LogGenerator aLogGen(aFileName);
+        try
+        {
+            std::ofstream generatedLog = aLogGen.initiateAndGenerateLog();
+        }
+        catch(const utils::exception::UnsupportedFormatError& e)
+        {
+            std::cout << "Problem during parsing because of : " << e.whatsWrong() << std::endl;
+            // COMPOSE ERROR e.whatsWrong()
+        }
+        catch(const utils::exception::FileImportError& e)
+        {
+            std::cout << "Problem at file opening: " << e.whatsWrong() << std::endl;
+            // COMPOSE ERROR e.whatsWrong()
         }
     }
 
